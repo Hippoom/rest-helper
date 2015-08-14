@@ -96,7 +96,7 @@ public class CommandMethodArgumentResolver implements HandlerMethodArgumentResol
             ReflectionUtils.doWithFields(arg.getClass(), new ReflectionUtils.FieldCallback() {
                         @Override
                         public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                            final PathVar pathVar = field.getDeclaredAnnotation(PathVar.class);
+                            final PathVar pathVar = field.getAnnotation(PathVar.class);
                             ReflectionUtils.makeAccessible(field);
                             ReflectionUtils.setField(field, arg, resolvePathVariable(pathVar.value(), methodParam, webRequest));
                         }

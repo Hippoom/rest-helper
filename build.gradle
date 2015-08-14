@@ -1,5 +1,6 @@
 apply plugin: 'java'
-apply plugin: 'spring-boot'
+//apply plugin: 'spring-boot'
+apply plugin: "jacoco"
 
 
 sourceCompatibility = 1.8
@@ -11,10 +12,10 @@ repositories {
 
 dependencies {
 
-    compile "org.springframework.boot:spring-boot-starter-web"
+    compile "org.springframework.boot:spring-boot-starter-web:${project.springBootVersion}"
     compile 'com.google.guava:guava:18.0'
 
-    testCompile "org.springframework.boot:spring-boot-starter-test"
+    testCompile "org.springframework.boot:spring-boot-starter-test:${project.springBootVersion}"
     testCompile('junit:junit:4.12') {
         exclude group: 'org.hamcrest'
     }
@@ -38,5 +39,12 @@ buildscript {
     }
 }
 
+test {
+    testLogging {
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+}
+
+test.finalizedBy jacocoTestReport
 
 

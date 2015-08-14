@@ -58,10 +58,10 @@ public class SampleCommandControllerTest {
 
         String responseBody = response.asString();
 
-        assertThat(JsonPath.read(responseBody, "$.id"), equalTo("1"));
-        assertThat(JsonPath.read(responseBody, "$.foo"), equalTo("f"));
-        assertThat(JsonPath.read(responseBody, "$.bar"), equalTo("b"));
-        assertThat(JsonPath.read(responseBody, "$.content"), equalTo("123456"));
+        assertThat((String) JsonPath.read(responseBody, "$.id"), equalTo("1"));
+        assertThat((String) JsonPath.read(responseBody, "$.foo"), equalTo("f"));
+        assertThat((String) JsonPath.read(responseBody, "$.bar"), equalTo("b"));
+        assertThat((String) JsonPath.read(responseBody, "$.content"), equalTo("123456"));
     }
 
     @Test

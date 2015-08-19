@@ -9,4 +9,5 @@ build
 #osx
 .DS_Store
 
-#local
+# local
+gradle.properties

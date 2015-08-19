@@ -1,5 +1,11 @@
 apply plugin: 'java'
 apply plugin: "jacoco"
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+
+group = 'com.github.hippoom'
+version = "0.1.0"
 
 
 sourceCompatibility = 1.7
@@ -27,6 +33,7 @@ buildscript {
 
     ext {
         springBootVersion = '1.2.3.RELEASE'
+        repositoryName = rootProject.name
     }
 
     repositories {
@@ -46,4 +53,79 @@ test {
 
 test.finalizedBy jacocoTestReport
 
+jar {
+    archiveName "${rootProject.name}-${rootProject.version}.jar"
+}
 
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveName "${rootProject.name}-${rootProject.version}-javadoc.jar"
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    archiveName "${rootProject.name}-${rootProject.version}-sources.jar"
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
+def publishStage() {
+    project.hasProperty('publishStage')? publishStage: false
+}
+
+if (publishStage()) {
+
+    signing {
+        sign configurations.archives
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: sonatypeUsername, password: sonatypePassword)
+                }
+
+                pom.project {
+                    groupId rootProject.group
+                    artifactId rootProject.name
+                    version rootProject.version
+
+                    name rootProject.name
+                    packaging 'jar'
+                    description "An extension to spring-mvc to simplify restful application stuff, see https://github.com/Hippoom/${repositoryName} for more detail."
+                    url "https://github.com/Hippoom/${repositoryName}"
+
+                    scm {
+                        url "scm:git@github.com:Hippoom/${repositoryName}.git"
+                        connection "scm:git@github.com:Hippoom/${repositoryName}.git"
+                        developerConnection "scm:git@github.com:Hippoom/${repositoryName}.git"
+                    }
+
+                    licenses {
+                        license {
+                            name 'The Apache License 2.0'
+                            url "https://github.com/Hippoom/${repositoryName}/blob/master/LICENSE"
+                     //       Distribution 'repo'
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id 'hippoom'
+                            name 'Yugang Zhou'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
